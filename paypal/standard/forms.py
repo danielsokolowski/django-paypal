@@ -36,7 +36,12 @@ class PayPalPaymentsForm(forms.Form):
         ("_cart", "Shopping cart"), 
         ("_xclick-subscriptions", "Subscribe")
     )
-    SHIPPING_CHOICES = ((1, "No shipping"), (0, "Shipping"))
+    RM_CHOICES = (
+        (0, "All shopping cart payments use the GET method"), 
+        (1, "The buyer’s browser is redirected to the return URL by using the GET method, but no payment variables are included"), 
+        (2, "The buyer’s browser is redirected to the return URL by using the POST method, and all payment variables are included")
+    )
+    SHIPPING_CHOICES = ((1, "No shipping"), (0, "Shipping"), (2, "Shipping Required"))
     NO_NOTE_CHOICES = ((1, "No Note"), (0, "Include Note"))
     RECURRING_PAYMENT_CHOICES = (
         (1, "Subscription Payments Recur"), 
@@ -85,6 +90,7 @@ class PayPalPaymentsForm(forms.Form):
     notify_url = forms.CharField(widget=ValueHiddenInput())
     cancel_return = forms.CharField(widget=ValueHiddenInput())
     return_url = forms.CharField(widget=ReservedValueHiddenInput(attrs={"name":"return"}))
+    rm = forms.ChoiceField(widget=forms.HiddenInput(), initial=RM_CHOICES[0][0])
     custom = forms.CharField(widget=ValueHiddenInput())
     invoice = forms.CharField(widget=ValueHiddenInput())
     
