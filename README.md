@@ -30,7 +30,11 @@ Using PayPal Payments Standard IPN:
         ...
         INSTALLED_APPS = (... 'paypal.standard.ipn', ...)
         ...
+        PAYPAL_TEST = False # sandbox or not mode and True for live mode
         PAYPAL_RECEIVER_EMAIL = "yourpaypalemail@example.com"
+        PAYPAL_IMAGE = 'https://www.paypalobjects.com/en_US/i/btn/btn_buynowCC_LG.gif'
+        				# default button image is http://images.paypal.com/images/x-click-but01.gif, for a list see: 
+        				# https://cms.paypal.com/cms_content/US/en_US/files/developer/paypal_button_chart_en.html
 
 1.  Create an instance of the `PayPalPaymentsForm` in the view where you would 
     like to collect money. Call `render` on the instance in your template to 
@@ -45,6 +49,8 @@ Using PayPal Payments Standard IPN:
             # What you want the button to do.
             paypal_dict = {
                 "business": "yourpaypalemail@example.com",
+                #"image": "https://www.paypalobjects.com/en_US/i/btn/btn_buynowCC_LG.gif"
+                "image_url": "http://www.example.com/your-header-logo-image.jpg", # max height: 98px width: 794px
                 "amount": "10000000.00",
                 "item_name": "name of the item",
                 "invoice": "unique-invoice-id",
@@ -65,6 +71,25 @@ Using PayPal Payments Standard IPN:
         <h1>Show me the money!</h1>
         <!-- writes out the form tag automatically -->
         {{ form.render }}
+        
+	a.	Alternatively you can create an intermediate view that performs pre-payment required processing and 
+		then redirects to the PayPal processing page.
+		
+		class  PaymentPreProcessView(RedirectView):
+	    """ Verifies cart is ready for payment - things like shipping cost is calculated """
+	    permanent = False
+	
+	    def get_redirect_url(self, **kwargs):
+	        """ Return the URL redirect to. URL matches are passed as kwargs"""
+	        ...
+	        pre-payment code here
+	        ... 
+	        paypal_dict = {
+                "business": "yourpaypalemail@example.com",
+                ...            }
+            
+            form = PayPalPaymentsForm(initial=paypal_dict)
+            return form.render_as_GET_url()
 
 1.  When someone uses this button to buy something PayPal makes a HTTP POST to 
     your "notify_url". PayPal calls this Instant Payment Notification (IPN). 
