@@ -8,6 +8,7 @@ from paypal.standard.widgets import ValueHiddenInput, ReservedValueHiddenInput
 from paypal.standard.conf import (POSTBACK_ENDPOINT, SANDBOX_POSTBACK_ENDPOINT,
 	RECEIVER_EMAIL)
 import urllib
+import uuid
 
 # 20:18:05 Jan 30, 2009 PST - PST timezone support is not included out of the box.
 # PAYPAL_DATE_FORMAT = ("%H:%M:%S %b. %d, %Y PST", "%H:%M:%S %b %d, %Y PST",)
@@ -98,7 +99,7 @@ class PayPalPaymentsForm(forms.Form):
 	return_url = forms.CharField(widget=ReservedValueHiddenInput(attrs={"name":"return"}))
 	rm = forms.ChoiceField(widget=forms.HiddenInput(), initial=RM_CHOICES[0][0])
 	custom = forms.CharField(widget=ValueHiddenInput())
-	invoice = forms.CharField(widget=ValueHiddenInput())
+	invoice = forms.CharField(widget=ValueHiddenInput(), initial = lambda : uuid.uuid4()) # random UUID
 
 	# Default fields.
 	cmd = forms.ChoiceField(widget=forms.HiddenInput(), initial=CMD_CHOICES[0][0])
