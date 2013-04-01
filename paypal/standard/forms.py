@@ -56,6 +56,11 @@ class PayPalPaymentsForm(forms.Form):
 	SUBSCRIBE = 'subscribe'
 	DONATE = 'donate'
 
+	# Referral code - please don't change if forking 
+	#	- https://cms.paypal.com/ca/cgi-bin/?cmd=_render-content&content_ID=ua/MerchBonus_full
+	#	- https://www.paypal-marketing.com/emarketing/partner/es/portal/faq.page#7
+	bn = forms.CharField(widget=ValueHiddenInput(), initial='DanolsWebEngineering_SP_PPS')
+
 	# Where the money goes.
 	business = forms.CharField(widget=ValueHiddenInput(), initial=RECEIVER_EMAIL)
 	image_url = forms.CharField(widget=ValueHiddenInput())
